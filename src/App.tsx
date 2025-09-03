@@ -177,7 +177,7 @@ function App() {
     fetchFilteredHolidays();
   }, [selectedProvince]);
 
-  const formatDate = (dateStr: string) => {
+  const formatDate = (dateStr: string | Date) => {
     const date = new Date(dateStr);
     const day = String(date.getDate()).padStart(2, "0");
     const month = date.toLocaleString("en-US", { month: "short" });
