@@ -16,12 +16,12 @@ import {
   createListCollection,
   Portal,
   Alert,
-  Popover
+  Popover,
 } from "@chakra-ui/react";
 import { RiArrowRightLine } from "react-icons/ri";
-import { DateRange } from 'react-date-range';
-import "react-date-range/dist/styles.css"
-import "react-date-range/dist/theme/default.css"
+import { DateRange } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 type Province = {
   value: string;
@@ -67,7 +67,9 @@ const getProvinceObjectByValue = (name: string): Province | undefined => {
 function App() {
   const [allData, setAllData] = useState<Holiday[]>([]);
   const [provinceHolidays, setProvinceHolidays] = useState<Holiday[]>([]);
-  const [filteredProvinceHolidays, setFilteredProvinceHolidays] = useState<Holiday[]>([]);
+  const [filteredProvinceHolidays, setFilteredProvinceHolidays] = useState<
+    Holiday[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [year, setYear] = useState<string>("2025");
   const [debouncedYear, setDebouncedYear] = useState<string>("2025");
@@ -85,7 +87,7 @@ function App() {
       endDate: new Date(),
       key: "selection",
     },
-  ])
+  ]);
 
   useEffect(() => {
     async function fetchHolidays() {
@@ -127,7 +129,7 @@ function App() {
         endDate: maxDate,
         key: "selection",
       },
-    ])
+    ]);
   }, [debouncedYear]);
 
   useEffect(() => {
@@ -138,18 +140,20 @@ function App() {
     return () => clearTimeout(handler);
   }, [year]);
 
-  const numericYear = parseInt(year, 10)
+  const numericYear = parseInt(year, 10);
   const minDate = new Date(numericYear - 1, 11, 31);
   const maxDate = new Date(numericYear, 11, 30);
   const filterListByDateRange = () => {
     if (range[0].startDate && range[0].endDate) {
       const filtered = provinceHolidays.filter((h) => {
         const holidayDate = new Date(h.date);
-        return holidayDate >= range[0].startDate! && holidayDate <= range[0].endDate!;
+        return (
+          holidayDate >= range[0].startDate! && holidayDate <= range[0].endDate!
+        );
       });
       setFilteredProvinceHolidays(filtered);
     }
-  }
+  };
   useEffect(() => {
     if (selectedProvinceDropDown.length > 0) {
       const obj = getProvinceObjectByValue(selectedProvinceDropDown[0]);
@@ -229,11 +233,19 @@ function App() {
   return (
     <>
       <HStack justify="center" mb="10" gap="2">
-        <Image src={`${import.meta.env.BASE_URL}/flag.png`} alt="Canada Flag" boxSize="40px" />
+        <Image
+          src={`${import.meta.env.BASE_URL}/flag.png`}
+          alt="Canada Flag"
+          boxSize="40px"
+        />
         <Heading size="4xl" textAlign="center">
           Canadian Public Holidays
         </Heading>
-        <Image src={`${import.meta.env.BASE_URL}/flag.png`} alt="Canada Flag" boxSize="40px" />
+        <Image
+          src={`${import.meta.env.BASE_URL}/flag.png`}
+          alt="Canada Flag"
+          boxSize="40px"
+        />
       </HStack>
       <Stack
         direction={{ base: "column", lg: "row" }}
@@ -242,7 +254,7 @@ function App() {
         align={{ base: "center", lg: "flex-start" }}
       >
         <Box flex="1" p="16px" maxW="xl" w={{ base: "90%", md: "500px" }}>
-          <Text mb="5" fontStyle='italic'>
+          <Text mb="5" fontStyle="italic">
             Public Holidays in <b>{selectedProvince}</b> for Calendar year{" "}
             <b>{year}</b>
           </Text>
@@ -251,10 +263,10 @@ function App() {
             value={selectedProvinceDropDown}
             onValueChange={(e) => setSelectedProvinceDropDown(e.value)}
             defaultValue={selectedProvinceDropDown}
-            color='purple'
+            color="purple"
           >
             <Select.HiddenSelect />
-            <Select.Label fontStyle='italic'>Select province</Select.Label>
+            <Select.Label fontStyle="italic">Select province</Select.Label>
             <Select.Control>
               <Select.Trigger>
                 <Select.ValueText />
@@ -282,8 +294,8 @@ function App() {
             fontSize="0.875rem"
             fontWeight="500"
             lineHeight="1.25rem"
-            color='purple'
-            fontStyle='italic'
+            color="purple"
+            fontStyle="italic"
           >
             Enter a year
           </Text>
@@ -292,7 +304,7 @@ function App() {
             size="md"
             onChange={(e) => setYear(e.target.value)}
             defaultValue={year}
-            color='purple'
+            color="purple"
           />
           <Text
             mt="5"
@@ -300,15 +312,15 @@ function App() {
             fontSize="0.875rem"
             fontWeight="500"
             lineHeight="1.25rem"
-            color='purple'
-            fontStyle='italic'
+            color="purple"
+            fontStyle="italic"
           >
             Select Date Range
           </Text>
-          <Popover.Root 
+          <Popover.Root
             positioning={{ placement: "bottom-start" }}
             onOpenChange={(details) => {
-              if(!details.open) {
+              if (!details.open) {
                 filterListByDateRange();
               }
             }}
@@ -317,7 +329,9 @@ function App() {
               <Input
                 size="sm"
                 readOnly
-                value={`${formatDate(range[0].startDate)} → ${formatDate(range[0].endDate)}`}
+                value={`${formatDate(range[0].startDate)} → ${formatDate(
+                  range[0].endDate
+                )}`}
                 cursor="pointer"
               />
             </Popover.Trigger>
@@ -337,7 +351,7 @@ function App() {
                             endDate: item.selection.endDate || maxDate,
                             key: "selection",
                           },
-                        ])
+                        ]);
                       }}
                       moveRangeOnFirstSelection={false}
                       ranges={range}
@@ -368,61 +382,69 @@ function App() {
             </Stack>
           ) : (
             <Stack>
-              {filteredProvinceHolidays.map((h, idx) => {
-                const googleSearch = `https://www.google.com/search?q=${encodeURIComponent(
-                  h.name + " holiday Canada"
-                )}`;
-                const bgColor = bgColors[idx % bgColors.length];
-                return (
-                  <Card.Root
-                    size="md"
-                    flexDirection="row"
-                    overflow="hidden"
-                    maxW="xl"
-                    verticalAlign="center"
-                    key={`card-${idx}`}
-                  >
-                    <Box
-                      as="header"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      px="4"
+              {filteredProvinceHolidays.length === 0 ? (
+                <Text fontStyle="italic" color="gray.500" textAlign="center">
+                  No holidays found for this date range.
+                </Text>
+              ) : (
+                filteredProvinceHolidays.map((h, idx) => {
+                  const googleSearch = `https://www.google.com/search?q=${encodeURIComponent(
+                    h.name + " holiday Canada"
+                  )}`;
+                  const bgColor = bgColors[idx % bgColors.length];
+                  return (
+                    <Card.Root
+                      size="md"
+                      flexDirection="row"
+                      overflow="hidden"
+                      maxW="xl"
+                      verticalAlign="center"
+                      key={`card-${idx}`}
                     >
-                      <Heading size="md" bg={bgColor} p="4" borderRadius="md">
-                        {formatDate(h.date)}
-                      </Heading>
-                    </Box>
-
-                    <Card.Body color="fg.muted">
-                      <Heading size="md" fontFamily="monospace">{h.name}</Heading>
-                    </Card.Body>
-
-                    <Box
-                      as="footer"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      px="4"
-                    >
-                      <Link
-                        href={googleSearch}
-                        target="_blank"
+                      <Box
+                        as="header"
                         display="flex"
                         alignItems="center"
-                        variant="plain"
-                        color="teal.500"
-                        textDecoration="none"
-                        _focus={{ boxShadow: "none", outline: "none" }}
-                        _hover={{ transform: "scale(1.05)" }}
+                        justifyContent="center"
+                        px="4"
                       >
-                        Learn More{" "}
-                        <RiArrowRightLine style={{ marginLeft: "4px" }} />
-                      </Link>
-                    </Box>
-                  </Card.Root>
-                );
-              })}
+                        <Heading size="md" bg={bgColor} p="4" borderRadius="md">
+                          {formatDate(h.date)}
+                        </Heading>
+                      </Box>
+
+                      <Card.Body color="fg.muted">
+                        <Heading size="md" fontFamily="monospace">
+                          {h.name}
+                        </Heading>
+                      </Card.Body>
+
+                      <Box
+                        as="footer"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        px="4"
+                      >
+                        <Link
+                          href={googleSearch}
+                          target="_blank"
+                          display="flex"
+                          alignItems="center"
+                          variant="plain"
+                          color="teal.500"
+                          textDecoration="none"
+                          _focus={{ boxShadow: "none", outline: "none" }}
+                          _hover={{ transform: "scale(1.05)" }}
+                        >
+                          Learn More{" "}
+                          <RiArrowRightLine style={{ marginLeft: "4px" }} />
+                        </Link>
+                      </Box>
+                    </Card.Root>
+                  );
+                })
+              )}
             </Stack>
           )}
         </Box>
