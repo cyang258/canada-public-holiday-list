@@ -5,5 +5,5 @@ import tsconfigPaths from "vite-tsconfig-paths"
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
-  base: process.env.VITE_BASE || '/canada-public-holiday-list'
+  base: '/canada-public-holiday-list'
 })
