@@ -197,11 +197,11 @@ function App() {
   return (
     <>
       <HStack justify="center" mb="10" gap="2">
-        <Image src="/flag.png" alt="Canada Flag" boxSize="40px" />
+        <Image src={`${import.meta.env.BASE_URL}/flag.png`} alt="Canada Flag" boxSize="40px" />
         <Heading size="4xl" textAlign="center">
           Canadian Public Holidays
         </Heading>
-        <Image src="/flag.png" alt="Canada Flag" boxSize="40px" />
+        <Image src={`${import.meta.env.BASE_URL}/flag.png`} alt="Canada Flag" boxSize="40px" />
       </HStack>
       <Stack
         direction={{ base: "column", lg: "row" }}
