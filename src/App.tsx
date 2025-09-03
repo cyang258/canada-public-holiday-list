@@ -16,8 +16,12 @@ import {
   createListCollection,
   Portal,
   Alert,
+  Popover
 } from "@chakra-ui/react";
 import { RiArrowRightLine } from "react-icons/ri";
+import { DateRange } from 'react-date-range';
+import "react-date-range/dist/styles.css"
+import "react-date-range/dist/theme/default.css"
 
 type Province = {
   value: string;
@@ -62,7 +66,8 @@ const getProvinceObjectByValue = (name: string): Province | undefined => {
 
 function App() {
   const [allData, setAllData] = useState<Holiday[]>([]);
-  const [holidays, setHolidays] = useState<Holiday[]>([]);
+  const [provinceHolidays, setProvinceHolidays] = useState<Holiday[]>([]);
+  const [filteredProvinceHolidays, setFilteredProvinceHolidays] = useState<Holiday[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [year, setYear] = useState<string>("2025");
   const [debouncedYear, setDebouncedYear] = useState<string>("2025");
@@ -74,6 +79,14 @@ function App() {
     items: provinces,
   });
   const [error, setError] = useState<boolean>(false);
+  const [range, setRange] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ])
+
   useEffect(() => {
     async function fetchHolidays() {
       try {
@@ -99,7 +112,8 @@ function App() {
           (a: Holiday, b: Holiday) =>
             new Date(a.date).getTime() - new Date(b.date).getTime()
         );
-        setHolidays(data);
+        setProvinceHolidays(data);
+        setFilteredProvinceHolidays(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -107,6 +121,13 @@ function App() {
       }
     }
     fetchHolidays();
+    setRange([
+      {
+        startDate: minDate,
+        endDate: maxDate,
+        key: "selection",
+      },
+    ])
   }, [debouncedYear]);
 
   useEffect(() => {
@@ -117,6 +138,18 @@ function App() {
     return () => clearTimeout(handler);
   }, [year]);
 
+  const numericYear = parseInt(year, 10)
+  const minDate = new Date(numericYear - 1, 11, 31);
+  const maxDate = new Date(numericYear, 11, 30);
+  const filterListByDateRange = () => {
+    if (range[0].startDate && range[0].endDate) {
+      const filtered = provinceHolidays.filter((h) => {
+        const holidayDate = new Date(h.date);
+        return holidayDate >= range[0].startDate! && holidayDate <= range[0].endDate!;
+      });
+      setFilteredProvinceHolidays(filtered);
+    }
+  }
   useEffect(() => {
     if (selectedProvinceDropDown.length > 0) {
       const obj = getProvinceObjectByValue(selectedProvinceDropDown[0]);
@@ -137,12 +170,10 @@ function App() {
         const newData = allData.filter(
           (h) => !h.counties || h.counties.includes(provinceObject.value)
         );
-        setHolidays(newData);
-        console.log(allData);
+        setProvinceHolidays(newData);
       }
       setLoading(false);
     };
-    console.log("trigger");
     fetchFilteredHolidays();
   }, [selectedProvince]);
 
@@ -150,7 +181,8 @@ function App() {
     const date = new Date(dateStr);
     const day = String(date.getDate()).padStart(2, "0");
     const month = date.toLocaleString("en-US", { month: "short" });
-    return `${day} ${month}`;
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
   };
 
   const bgColors = ["#edeffb", "#edeffb", "#f6eeed", "#f1f8ec"];
@@ -262,6 +294,59 @@ function App() {
             defaultValue={year}
             color='purple'
           />
+          <Text
+            mt="5"
+            mb="1"
+            fontSize="0.875rem"
+            fontWeight="500"
+            lineHeight="1.25rem"
+            color='purple'
+            fontStyle='italic'
+          >
+            Select Date Range
+          </Text>
+          <Popover.Root 
+            positioning={{ placement: "bottom-start" }}
+            onOpenChange={(details) => {
+              if(!details.open) {
+                filterListByDateRange();
+              }
+            }}
+          >
+            <Popover.Trigger asChild>
+              <Input
+                size="sm"
+                readOnly
+                value={`${formatDate(range[0].startDate)} → ${formatDate(range[0].endDate)}`}
+                cursor="pointer"
+              />
+            </Popover.Trigger>
+            <Portal>
+              <Popover.Positioner>
+                <Popover.Content w="auto" minW="300px">
+                  <Popover.Arrow />
+                  <Popover.Body>
+                    <DateRange
+                      editableDateInputs={true}
+                      minDate={minDate}
+                      maxDate={maxDate}
+                      onChange={(item) => {
+                        setRange([
+                          {
+                            startDate: item.selection.startDate || minDate,
+                            endDate: item.selection.endDate || maxDate,
+                            key: "selection",
+                          },
+                        ])
+                      }}
+                      moveRangeOnFirstSelection={false}
+                      ranges={range}
+                    />
+                  </Popover.Body>
+                </Popover.Content>
+              </Popover.Positioner>
+            </Portal>
+          </Popover.Root>
         </Box>
         <Box flex="1" p="16px">
           {error ? (
@@ -283,7 +368,7 @@ function App() {
             </Stack>
           ) : (
             <Stack>
-              {holidays.map((h, idx) => {
+              {filteredProvinceHolidays.map((h, idx) => {
                 const googleSearch = `https://www.google.com/search?q=${encodeURIComponent(
                   h.name + " holiday Canada"
                 )}`;
