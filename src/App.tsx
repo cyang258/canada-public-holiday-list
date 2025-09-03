@@ -210,7 +210,7 @@ function App() {
         align={{ base: "center", lg: "flex-start" }}
       >
         <Box flex="1" p="16px" maxW="xl" w={{ base: "90%", md: "500px" }}>
-          <Text mb="5">
+          <Text mb="5" fontStyle='italic'>
             Public Holidays in <b>{selectedProvince}</b> for Calendar year{" "}
             <b>{year}</b>
           </Text>
@@ -219,9 +219,10 @@ function App() {
             value={selectedProvinceDropDown}
             onValueChange={(e) => setSelectedProvinceDropDown(e.value)}
             defaultValue={selectedProvinceDropDown}
+            color='purple'
           >
             <Select.HiddenSelect />
-            <Select.Label>Select province</Select.Label>
+            <Select.Label fontStyle='italic'>Select province</Select.Label>
             <Select.Control>
               <Select.Trigger>
                 <Select.ValueText />
@@ -249,6 +250,8 @@ function App() {
             fontSize="0.875rem"
             fontWeight="500"
             lineHeight="1.25rem"
+            color='purple'
+            fontStyle='italic'
           >
             Enter a year
           </Text>
@@ -257,6 +260,7 @@ function App() {
             size="md"
             onChange={(e) => setYear(e.target.value)}
             defaultValue={year}
+            color='purple'
           />
         </Box>
         <Box flex="1" p="16px">
@@ -306,7 +310,7 @@ function App() {
                     </Box>
 
                     <Card.Body color="fg.muted">
-                      <Heading size="md">{h.name}</Heading>
+                      <Heading size="md" fontFamily="monospace">{h.name}</Heading>
                     </Card.Body>
 
                     <Box
@@ -323,6 +327,9 @@ function App() {
                         alignItems="center"
                         variant="plain"
                         color="teal.500"
+                        textDecoration="none"
+                        _focus={{ boxShadow: "none", outline: "none" }}
+                        _hover={{ transform: "scale(1.05)" }}
                       >
                         Learn More{" "}
                         <RiArrowRightLine style={{ marginLeft: "4px" }} />
